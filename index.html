@@ -245,6 +245,11 @@ cursor.className = "cursor";
 function openLetter() {
   if (navigator.vibrate) navigator.vibrate(15);
 
+  // 点击信封时播放音乐
+  bgm.play().catch(() => {});
+  playing = true;
+  document.getElementById("musicBtn").style.display = "block";
+
   document.getElementById("envelope").style.display = "none";
   const paper = document.getElementById("paper");
   paper.classList.add("show");
@@ -265,7 +270,6 @@ function typeWriter() {
   } else {
     setTimeout(() => {
       cursor.style.opacity = 0;
-      document.getElementById("musicBtn").style.display = "block";
     }, 800);
   }
 }
@@ -294,4 +298,5 @@ function toggleMusic() {
 
 </body>
 </html>
+
 
