@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Merry Christmas 🎄</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  overflow-x: hidden;
+  color: #5a2a2a;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('bg.jpg') center / cover no-repeat;
+  z-index: 0;
+}
+
+/* Snow */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: #fff;
+  pointer-events: none;
+  animation: fall linear infinite;
+  z-index: 5;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+
+/* Layout */
+.container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: 140px 16px 80px;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 360px; /* 信封与信纸统一宽度 */
+}
+
+/* Envelope */
+.envelope {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(180deg, #f6efe6, #eadfce);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* folds */
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 49%, rgba(0,0,0,0.06) 50%, transparent 51%),
+    linear-gradient(225deg, transparent 49%, rgba(0,0,0,0.04) 50%, transparent 51%);
+  pointer-events: none;
+}
+
+.envelope::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(0,0,0,0.05));
+  clip-path: polygon(0 0, 100% 0, 50% 55%);
+}
+
+/* recipient */
+.to {
+  position: absolute;
+  bottom: 46px;
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #7a3a3a;
+  font-family: "KaiTi", "STKaiti", serif;
+  z-index: 2;
+}
+
+/* wax */
+.wax {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  background: #b11226;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 3;
+}
+
+/* Paper */
+.paper {
+  display: none;
+  width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.015),
+    rgba(0,0,0,0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.paper.show {
+  display: block;
+  animation: open 1.4s ease forwards;
+}
+
+@keyframes open {
+  from { transform: translateY(40px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Letter */
+.letter {
+  padding: 64px 28px 36px;
+  font-size: 17px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+/* Cursor */
+.cursor {
+  display: inline-block;
+  width: 6px;
+  background: #5a2a2a;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Signature */
+.signature {
+  margin-top: 28px;
+  text-align: right;
+  font-style: italic;
+  color: #7a3a3a;
+}
+
+/* Music */
+.music-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 40px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 10;
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .letter {
+    font-size: 16px;
+    line-height: 1.95;
+    padding: 60px 22px 32px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="wrapper">
+
+    <div class="envelope" id="envelope" onclick="openLetter()">
+      <div class="to">给&nbsp;章女士的圣诞祝福</div>
+      <div class="wax"></div>
+    </div>
+
+    <div class="paper" id="paper">
+      <div class="letter" id="letter"></div>
+      <div class="signature">— from someone who’s glad to know you</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="music-btn" id="musicBtn" onclick="toggleMusic()">♫ Music</div>
+
+<audio id="bgm" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const text = `
+圣诞节到了，
+世界好像慢了下来。
+
+虽然我们认识的时间还不算久，
+但每一次聊天，
+都让我觉得轻松而真诚。
+
+虽然我们一个在美东，
+一个在美西。
+
+但是距离并没有让这份认识变得遥远，
+反而让人更珍惜
+慢慢了解彼此的过程。
+
+希望这个圣诞节，
+你能被温柔的事情包围。
+
+Merry Christmas ✨
+`;
+
+let i = 0;
+const speed = 45;
+const el = document.getElementById("letter");
+const cursor = document.createElement("span");
+cursor.className = "cursor";
+
+function openLetter() {
+  if (navigator.vibrate) navigator.vibrate(15);
+
+  document.getElementById("envelope").style.display = "none";
+  const paper = document.getElementById("paper");
+  paper.classList.add("show");
+
+  setTimeout(() => {
+    window.scrollTo({ top: paper.offsetTop - 24, behavior: "smooth" });
+  }, 300);
+
+  el.appendChild(cursor);
+  typeWriter();
+}
+
+function typeWriter() {
+  if (i < text.length) {
+    cursor.before(text.charAt(i));
+    i++;
+    setTimeout(typeWriter, speed);
+  } else {
+    setTimeout(() => {
+      cursor.style.opacity = 0;
+      document.getElementById("musicBtn").style.display = "block";
+    }, 800);
+  }
+}
+
+/* Snow */
+function snow() {
+  const s = document.createElement("div");
+  s.className = "snowflake";
+  s.innerText = "❄";
+  s.style.left = Math.random() * window.innerWidth + "px";
+  s.style.fontSize = Math.random() * 10 + 12 + "px";
+  s.style.animationDuration = Math.random() * 5 + 6 + "s";
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 12000);
+}
+setInterval(snow, 260);
+
+/* Music */
+const bgm = document.getElementById("bgm");
+let playing = false;
+function toggleMusic() {
+  if (!playing) { bgm.play(); playing = true; }
+  else { bgm.pause(); playing = false; }
+}
+</script>
+
+</body>
+</html>
+
